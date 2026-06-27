@@ -161,17 +161,26 @@ function App() {
   // Extract list of unique doctors currently in the database
   const uniqueDoctorsList = ['All', ...new Set(appointments.map((appt) => appt.doctor).filter(Boolean))];
 
-  // Combined Filter, Search, & Chronological Sorting execution lines
+  // Combined Filter, Search (Name, Phone, MD, Date), & Chronological Sorting
   const processedAppointments = appointments
     .filter((appt) => {
+      // 1. Handle Doctor Dropdown Filter
       const matchesDoctor = selectedDoctorFilter === 'All' || appt.doctor === selectedDoctorFilter;
       
-      // Check if text matches patient name, phone number, or doctor name
+      // 2. Prepare text comparison values
       const searchLower = searchQuery.toLowerCase();
+      
+      // Format the appointment's raw date to match readable text string shapes (e.g., "7/23/2026" or "Thursday")
+      const readableDateStr = appt.appointmentDate 
+        ? new Date(appt.appointmentDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' }).toLowerCase()
+        : '';
+
+      // 3. Check if search matches Patient Name, Phone, Doctor, OR Date strings
       const matchesSearch = 
         appt.patientName.toLowerCase().includes(searchLower) ||
         appt.patientPhone.includes(searchLower) ||
-        appt.doctor.toLowerCase().includes(searchLower);
+        appt.doctor.toLowerCase().includes(searchLower) ||
+        readableDateStr.includes(searchLower); // 📅 Adds dynamic date searching!
 
       return matchesDoctor && matchesSearch;
     })
