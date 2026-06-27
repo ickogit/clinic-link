@@ -281,7 +281,11 @@ function App() {
                         <span className="doctor-tag">Dr. {appt.doctor.replace(/^Dr\.\s*/i, '')}</span>
                       </div>
                       <div className="schedule-details">
-                        Time: <span className="highlight-text">{appt.timeSlot}</span> | Date: <span className="highlight-text">{appt.appointmentDate ? new Date(appt.appointmentDate).toLocaleDateString() : ''}</span>
+                        Time: <span className="highlight-text">{appt.timeSlot}</span> | Date: <span className="highlight-text">
+                          {appt.appointmentDate 
+                            ? new Date(appt.appointmentDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' }) 
+                            : ''}
+                        </span>
                       </div>
                     </div>
                     <div className="action-buttons">
