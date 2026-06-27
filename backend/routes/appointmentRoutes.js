@@ -62,24 +62,37 @@ router.patch('/:id/status', async (req, res) => {
   }
 });
 
-// 4. Delete an appointment completely
+// DELETE an appointment by ID
 router.delete('/:id', async (req, res) => {
   try {
-    // Find the specific document by its dynamic ID and delete it
     const deletedAppointment = await Appointment.findByIdAndDelete(req.params.id);
-
     if (!deletedAppointment) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
+    res.json({ message: 'Appointment deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
-    // Return a success message along with the deleted data
-    res.status(200).json({ 
-      message: 'Appointment successfully removed from the clinic records.',
-      deletedAppointment 
-    });
-  } catch (error) {
-    console.error('Error deleting appointment:', error);
-    res.status(500).json({ message: 'Server error, could not delete appointment.' });
+// PUT (Update) an appointment by ID
+router.put('/:id', async (req, res) => {
+  const { patientName, patientPhone, doctor, appointmentDate, timeSlot } = req.body;
+  
+  try {
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { patientName, patientPhone, doctor, appointmentDate, timeSlot },
+      { returnDocument: 'after', runValidators: true }
+    );
+
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    res.json({ message: 'Appointment updated successfully', data: updatedAppointment });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
